@@ -1,0 +1,203 @@
+#Jeanette - Kelly Lee Owens
+#arr by Aidan Kuster
+
+use_bpm 130
+
+#control panel
+bd_kick = 0
+hihats = 0
+openhat = 0
+crash = 0
+hndclap = 0
+jeanette = 0
+octavesynth = 0
+pulse = 0
+jeanette2 = 0
+bass = 0
+bass2 = 0
+bass2acco = 0
+
+
+clap = [clap sample goes here]
+Ohat = [open hi-hat sample goes here]
+
+live_loop :tick do
+  sleep 4
+end
+
+live_loop :bd, sync: :tick do
+  if bd_kick < 1 then stop end
+  with_fx :level, amp: 1.5 do
+    with_fx :lpf, cutoff: 95 do
+      sample :bd_haus
+      sleep 1
+    end
+  end
+end
+
+live_loop :hats, sync: :tick do
+  if hihats < 1 then stop end
+  with_fx :level, amp: 0.5 do
+    sleep 0.5
+    sample :drum_cymbal_closed, finish: 0.3
+    sleep 0.25
+    sample :drum_cymbal_closed, finish: 0.3
+    sleep 0.25
+  end
+end
+
+live_loop :openhat, sync: :tick do
+  if openhat < 1 then stop end
+  with_fx :level, amp: 0.3 do
+    with_fx :reverb, room: 0.3, mix: 0.4 do
+      sleep 0.5
+      sample Ohat
+      sleep 0.5
+    end
+  end
+end
+
+live_loop :clap, sync: :tick do
+  if hndclap < 1 then stop end
+  with_fx :reverb, room: 0.3, mix: 0.4 do
+    sleep 1
+    sample clap, rate: 0.925, finish: 0.2, amp: 0.65
+    sleep 1
+  end
+end
+
+live_loop :crash, sync: :tick do
+  if crash < 1 then stop end
+  with_fx :reverb, room: 1, mix: 0.8 do
+    with_fx :level, amp: 0.75 do
+      with_fx :echo, phase: 1, mix: 0.6, decay: 16 do
+        sample :drum_splash_soft, rate: 1.3, sustain: 8
+        sleep 32
+      end
+    end
+  end
+end
+
+
+live_loop :jeanette, sync: :tick do
+  if jeanette < 1 then stop end
+  use_synth :saw
+  with_synth_defaults release: 0.25 do
+    with_fx :reverb, room: 0.8, mix: 0.6, damp: 0.25 do
+      with_fx :eq, mid: -0.9, low: -0.5 do
+        with_fx :echo, mix: 0.25, phase: 1 do
+          with_fx :lpf, cutoff: 100 do
+            with_fx :flanger, depth: 5, phase: 5 do
+              with_fx :level, amp: 0.6 do
+                
+                play_pattern_timed [:r, :bb4, :ab4, :cs5, :bb4],
+                  [1.5, 1, 0.75, 0.25, 0.5]
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+live_loop :jeanette2, sync: :tick do
+  if jeanette2 < 1 then stop end
+  use_synth :chipbass
+  with_synth_defaults release: 0.5 do
+    with_fx :level, amp: 0.4 do
+      with_fx :compressor, mix: 1, threshold: 20, amp: 1.2 do
+        with_fx :echo, phase: 0.75, mix: 0.35 do
+          with_fx :reverb, room: 0.5, mix: 0.6 do
+            play_pattern_timed [:ab4, :db4, :r, :db4, :bb3, :db4,
+                                :bb3, :r, :f4, :bb3, :f4, :bb3,
+                                :r, :f4, :bb3, :ab4, :r, :bb3,
+                                :db4, :eb4, :f4, :r, :eb4, :r,
+            :f4, :r, :db4, :r, :ab4, :db4],
+              [0.25,0.5, 2.5,0.25,0.5,0.25,0.5,2.5,0.25,0.5,0.25,0.5,2.5,
+               0.25,0.5,1,2.25,0.25,0.25,0.25,1.5,2.5,1.5,2.5,1.5,2.5,
+               2,1.25,0.25,0.5]
+              end
+        end
+      end
+    end
+  end
+end
+
+live_loop :octavesynth, sync: :tick do
+  if octavesynth < 1 then stop end
+  use_synth :square
+  with_synth_defaults release: 2 do
+    with_fx :level, amp: 0.8 do
+      with_fx :eq, low: -0.3, mid: -1.0, high: -0.6 do
+        with_fx :lpf, cutoff: 75 do
+          with_fx :hpf, cutoff: 65 do
+            play_pattern_timed [:bb4, :bb3, :bb4, :bb3, :gb4, :gb3,
+                                :gb4, :gb3, :eb4, :eb3, :eb4, :eb3,
+            :gb4, :gb3, :gb4, :gb3],
+              [0.25,3.75,0.25,3.75,0.25,3.75,0.25,3.75,0.25,3.75,0.25,
+               3.75,0.25,3.75,0.25,3.75]
+              end
+        end
+      end
+    end
+  end
+end
+
+
+live_loop :pulse, sync: :tick do
+  if pulse < 1 then stop end
+  use_synth :pulse
+  with_synth_defaults release: 0.25 do
+    with_fx :level, amp: 0.25 do
+      with_fx :slicer, phase: 0.75 do
+        with_fx :echo, mix: 0.5, phase: 1.5, pre_mix: 0.25 do
+          with_fx :hpf, cutoff: 50 do
+            play_pattern_timed [:ds4, :ds4, :cs4, :cs4], [0.5, 2, 1, 0.5]
+          end
+        end
+      end
+    end
+  end
+end
+
+live_loop :bass, sync: :tick do
+  if bass < 1 then stop end
+  use_synth :tri
+  with_synth_defaults release: 0.1 do
+    with_fx :level, amp: 0.8 do
+      with_fx :lpf, cutoff: 81 do
+        play_pattern_timed [:bb2, :gb2, :eb2, :gb2], [8,8,8,8]
+      end
+    end
+  end
+end
+
+live_loop :bass2, sync: :tick do
+  if bass2 < 1 then stop end
+  use_synth :tri
+  with_synth_defaults release: 0.1 do
+    with_fx :level, amp: 0.8 do
+      with_fx :lpf, cutoff: 81 do
+        play_pattern_timed [:r, :bb2, :ab2, :cs3, :bb2],
+          [1.5, 1, 0.75, 0.25, 0.5]
+      end
+    end
+  end
+end
+
+live_loop :bass2acco, sync: :tick do
+  if bass2acco < 1 then stop end
+  use_synth :tri
+  with_synth_defaults release: 0.1 do
+    with_fx :level, amp: 1.15 do
+      with_fx :compressor, mix: 0.75 do
+        with_fx :lpf, cutoff: 75 do
+          play_pattern_timed [:bb1, :r, :bb1, :r, :gb1, :r, :gb1, :r,
+          :eb1, :r, :eb1, :r, :gb1, :r, :gb1, :r],
+            [1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3]
+        end
+      end
+    end
+  end
+end
